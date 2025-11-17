@@ -9,7 +9,10 @@ git clone https://github.com/stephenhsklarew/HeadlineImageSelector.git
 cd HeadlineImageSelector
 python3 -m venv venv
 source venv/bin/activate
-pip install -e .
+pip install --upgrade pip
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+pip install transformers chromadb google-api-python-client google-auth-httplib2 \
+    google-auth-oauthlib pyyaml tqdm click rich scikit-learn
 ```
 
 ## Step 2: Google Drive Setup
@@ -38,7 +41,7 @@ To get your folder ID:
 ## Step 4: Index Your Images
 
 ```bash
-his-index
+./his-index
 ```
 
 First run will open browser for OAuth authorization. This creates `token_drive.json`.
@@ -46,19 +49,19 @@ First run will open browser for OAuth authorization. This creates `token_drive.j
 ## Step 5: Search!
 
 ```bash
-his-search --content "AI in healthcare" --style "professional"
+./his-search --content "AI in healthcare" --style "professional"
 ```
 
 ## Example Workflows
 
 ### For blog posts:
 ```bash
-cat my_article.md | his-search --style "professional" --orientation landscape
+cat my_article.md | ./his-search --style "professional" --orientation landscape
 ```
 
 ### For social media:
 ```bash
-his-search --content "5 tips for remote work" --style "modern" --orientation square -k 3
+./his-search --content "5 tips for remote work" --style "modern" --orientation square -k 3
 ```
 
 ### From Python:
@@ -77,11 +80,13 @@ print(f"Best match: {results[0]['drive_url']}")
 
 ## Troubleshooting
 
-**"No images in index"** → Run `his-index` first
+**"No images in index"** → Run `./his-index` first
 
 **"Credentials not found"** → Put `credentials.json` in project root
 
 **"MPS not available"** → Change `device: "mps"` to `device: "cpu"` in config
+
+**Can't find his-index command** → Use `./his-index` with `./` prefix, or use `python -m headline_image_selector.cli.index`
 
 ## Next Steps
 
