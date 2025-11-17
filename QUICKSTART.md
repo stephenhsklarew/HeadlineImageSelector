@@ -25,6 +25,14 @@ pip install transformers chromadb google-api-python-client google-auth-httplib2 
 
 ## Step 3: Configure
 
+**Option A: Use the setup script (easiest)**
+```bash
+python setup_config.py
+```
+The script will prompt you for your Google Drive folder ID and update the config automatically.
+
+**Option B: Edit config manually**
+
 Edit `config/default_config.yaml`:
 
 ```yaml
