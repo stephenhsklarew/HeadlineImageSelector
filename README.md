@@ -42,8 +42,24 @@ cd HeadlineImageSelector
 python3 -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-# Install the package
-pip install -e .
+# Upgrade pip and install dependencies
+pip install --upgrade pip
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+pip install transformers chromadb google-api-python-client google-auth-httplib2 \
+    google-auth-oauthlib pyyaml tqdm click rich scikit-learn
+
+# The CLI tools are ready to use from the project directory
+# Use ./his-index and ./his-search
+```
+
+**Alternative: Python Module Method**
+
+You can also run commands using Python's module syntax:
+
+```bash
+export PYTHONPATH=src:$PYTHONPATH
+python -m headline_image_selector.cli.index --help
+python -m headline_image_selector.cli.search --help
 ```
 
 ### Google Drive Setup
@@ -94,17 +110,19 @@ First, scan your Google Drive folders and build the searchable index:
 
 ```bash
 # Index all configured folders
-his-index
+./his-index
 
 # Reset and rebuild from scratch
-his-index --reset
+./his-index --reset
 
 # Index specific folder(s)
-his-index --folder-id YOUR_FOLDER_ID
+./his-index --folder-id YOUR_FOLDER_ID
 
 # Verbose output
-his-index -v
+./his-index -v
 ```
+
+*Note: Use `./his-index` from the project directory, or `python -m headline_image_selector.cli.index` from anywhere.*
 
 This will:
 - Authenticate with Google Drive
@@ -119,23 +137,25 @@ Search for images that match your content:
 
 ```bash
 # Basic search
-his-search --content "AI transforming healthcare in 2025"
+./his-search --content "AI transforming healthcare in 2025"
 
 # Add style prompt
-his-search --content "Leadership in remote teams" --style "professional and modern"
+./his-search --content "Leadership in remote teams" --style "professional and modern"
 
 # Filter by orientation
-his-search --content "Tech innovation" --orientation landscape
+./his-search --content "Tech innovation" --orientation landscape
 
 # Limit results
-his-search --content "Startup culture" -k 3
+./his-search --content "Startup culture" -k 3
 
 # Pipe content from file or other commands
-cat article.txt | his-search --style "creative"
+cat article.txt | ./his-search --style "creative"
 
 # JSON output for programmatic use
-his-search --content "Your content" --json
+./his-search --content "Your content" --json
 ```
+
+*Note: Use `./his-search` from the project directory, or `python -m headline_image_selector.cli.search` from anywhere.*
 
 ### 3. Python API
 
