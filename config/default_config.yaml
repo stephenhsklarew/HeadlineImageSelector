@@ -4,6 +4,7 @@
 google_drive:
   # Folder IDs to scan for images (get from Drive folder URL)
   # Example: https://drive.google.com/drive/folders/ABC123 -> folder_id: ABC123
+  # IMPORTANT: Replace with YOUR actual Google Drive folder ID!
   folder_ids:
     - "YOUR_FOLDER_ID_HERE"
 
@@ -84,7 +85,7 @@ search:
     # Filter by color (dominant colors must include this color)
     # Format: [R, G, B] values 0-255, or null to disable
     color_filter: null
-    color_tolerance: 50  # How close colors need to be (0-255)
+    color_tolerance: 50 # How close colors need to be (0-255)
 
   # Style prompt weight (0.0 to 1.0)
   # Higher = style matters more, Lower = content matters more
@@ -92,6 +93,6 @@ search:
 
 # Logging
 logging:
-  level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+  level: "INFO" # DEBUG, INFO, WARNING, ERROR
   format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-  file: null  # Set path to enable file logging, null for console only
+  file: null # Set path to enable file logging, null for console only

@@ -103,6 +103,29 @@ class DriveImageIndexer:
         """
         all_images = []
 
+        # Validate folder IDs first
+        for folder_id in self.folder_ids:
+            if folder_id == "YOUR_FOLDER_ID_HERE":
+                raise ValueError(
+                    "Please replace 'YOUR_FOLDER_ID_HERE' in config with your actual Google Drive folder ID.\n"
+                    "To find your folder ID:\n"
+                    "  1. Open the folder in Google Drive\n"
+                    "  2. Look at the URL: https://drive.google.com/drive/folders/FOLDER_ID_HERE\n"
+                    "  3. Copy the FOLDER_ID_HERE part to your config file"
+                )
+            try:
+                # Verify folder exists and is accessible
+                folder = self.service.files().get(fileId=folder_id, fields="id, name").execute()
+                logger.info(f"Scanning folder: {folder['name']} ({folder_id})")
+            except Exception as e:
+                raise ValueError(
+                    f"Cannot access folder {folder_id}: {e}\n"
+                    "Please check:\n"
+                    "  1. The folder ID is correct\n"
+                    "  2. The Google account has access to this folder\n"
+                    "  3. The folder is not in the trash"
+                )
+
         folders_to_scan = self.folder_ids.copy()
         scanned_folders = set()
 
@@ -132,19 +155,25 @@ class DriveImageIndexer:
 
                     items = results.get("files", [])
 
+                    logger.debug(f"Folder {folder_id}: found {len(items)} items")
+
                     for item in items:
                         # Check if it's a folder
                         if item["mimeType"] == "application/vnd.google-apps.folder":
                             if self.recursive:
+                                logger.debug(f"Found subfolder: {item['name']} ({item['id']})")
                                 folders_to_scan.append(item["id"])
                         # Check if it's a supported image
                         elif item["mimeType"].startswith("image/"):
                             # Extract file extension
                             ext = item["name"].rsplit(".", 1)[-1].lower()
+                            logger.debug(f"Found image: {item['name']} (type: {item['mimeType']}, ext: {ext})")
                             if ext in self.supported_formats:
                                 item["folder_id"] = folder_id
                                 all_images.append(item)
                                 pbar.set_postfix(images=len(all_images))
+                            else:
+                                logger.debug(f"  Skipped: extension '{ext}' not in {self.supported_formats}")
 
                     page_token = results.get("nextPageToken")
                     if not page_token:
