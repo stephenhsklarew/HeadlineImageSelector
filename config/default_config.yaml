@@ -1,0 +1,97 @@
+# HeadlineImageSelector Configuration
+
+# Google Drive settings
+google_drive:
+  # Folder IDs to scan for images (get from Drive folder URL)
+  # Example: https://drive.google.com/drive/folders/ABC123 -> folder_id: ABC123
+  folder_ids:
+    - "YOUR_FOLDER_ID_HERE"
+
+  # OAuth credentials (place credentials.json in project root or config/)
+  credentials_path: "credentials.json"
+  token_path: "token_drive.json"
+
+  # Supported image formats
+  supported_formats:
+    - "jpg"
+    - "jpeg"
+    - "png"
+    - "webp"
+
+  # Recursive search through subfolders
+  recursive: true
+
+# CLIP model settings
+clip:
+  # Model options:
+  # - "openai/clip-vit-base-patch32" (faster, ~350MB)
+  # - "openai/clip-vit-large-patch14" (better quality, ~900MB)
+  model_name: "openai/clip-vit-base-patch32"
+
+  # Device: "mps" for Apple Silicon, "cuda" for NVIDIA, "cpu" for CPU-only
+  device: "mps"
+
+  # Batch size for processing images
+  batch_size: 8
+
+  # Image preprocessing
+  image_size: 224
+
+# Vector database settings
+chromadb:
+  # Storage path (relative to project root)
+  persist_directory: "data/chroma"
+
+  # Collection name
+  collection_name: "brand_images"
+
+  # Distance metric: "cosine", "l2", "ip" (inner product)
+  distance_metric: "cosine"
+
+# Indexing settings
+indexing:
+  # Download images temporarily for processing
+  download_temp: true
+  temp_dir: "data/cache"
+
+  # Extract color palettes (top N dominant colors)
+  extract_colors: true
+  num_colors: 5
+
+  # Progress display
+  show_progress: true
+
+  # Skip re-indexing if image already exists (based on Drive file ID)
+  skip_existing: true
+
+# Search settings
+search:
+  # Number of results to return
+  top_k: 5
+
+  # Minimum similarity score (0.0 to 1.0)
+  # Lower = more permissive, Higher = stricter matching
+  min_similarity: 0.0
+
+  # Filters (optional)
+  filters:
+    # Filter by image orientation: "landscape", "portrait", "square", null (any)
+    orientation: null
+
+    # Filter by folder IDs (subset of indexed folders)
+    folder_ids: []
+
+    # Filter by color (dominant colors must include this color)
+    # Format: [R, G, B] values 0-255, or null to disable
+    color_filter: null
+    color_tolerance: 50  # How close colors need to be (0-255)
+
+  # Style prompt weight (0.0 to 1.0)
+  # Higher = style matters more, Lower = content matters more
+  style_weight: 0.3
+
+# Logging
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: null  # Set path to enable file logging, null for console only
