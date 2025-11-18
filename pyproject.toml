@@ -48,6 +48,12 @@ dev = [
     "ruff>=0.1.0",
     "mypy>=1.5.0",
 ]
+api = [
+    "fastapi>=0.104.1",
+    "uvicorn[standard]>=0.24.0",
+    "jinja2>=3.1.2",
+    "python-multipart>=0.0.6",
+]
 
 [project.scripts]
 his-index = "headline_image_selector.cli.index:main"
