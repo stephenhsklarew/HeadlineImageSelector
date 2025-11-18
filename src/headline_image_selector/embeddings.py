@@ -148,13 +148,19 @@ class CLIPEmbedder:
         Generate embedding for text
 
         Args:
-            text: Text to embed
+            text: Text to embed (will be truncated if too long)
 
         Returns:
             Normalized embedding vector as numpy array
         """
-        # Process text
-        inputs = self.processor(text=[text], return_tensors="pt", padding=True)
+        # Process text with truncation to handle CLIP's 77 token limit
+        inputs = self.processor(
+            text=[text],
+            return_tensors="pt",
+            padding=True,
+            truncation=True,
+            max_length=77
+        )
         inputs = {k: v.to(self.device) for k, v in inputs.items()}
 
         # Generate embedding
@@ -172,13 +178,19 @@ class CLIPEmbedder:
         Generate embeddings for multiple texts
 
         Args:
-            texts: List of text strings to embed
+            texts: List of text strings to embed (will be truncated if too long)
 
         Returns:
             Array of normalized embeddings (n_texts x embedding_dim)
         """
-        # Process all texts
-        inputs = self.processor(text=texts, return_tensors="pt", padding=True)
+        # Process all texts with truncation
+        inputs = self.processor(
+            text=texts,
+            return_tensors="pt",
+            padding=True,
+            truncation=True,
+            max_length=77
+        )
         inputs = {k: v.to(self.device) for k, v in inputs.items()}
 
         # Generate embeddings

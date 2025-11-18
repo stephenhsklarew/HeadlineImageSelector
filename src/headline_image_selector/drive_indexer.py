@@ -20,7 +20,10 @@ from tqdm import tqdm
 logger = logging.getLogger(__name__)
 
 # Google Drive API scopes
-SCOPES = ["https://www.googleapis.com/auth/drive.readonly"]
+SCOPES = [
+    "https://www.googleapis.com/auth/drive.readonly",
+    "https://www.googleapis.com/auth/drive.metadata.readonly"
+]
 
 
 class DriveImageIndexer:
@@ -114,8 +117,12 @@ class DriveImageIndexer:
                     "  3. Copy the FOLDER_ID_HERE part to your config file"
                 )
             try:
-                # Verify folder exists and is accessible
-                folder = self.service.files().get(fileId=folder_id, fields="id, name").execute()
+                # Verify folder exists and is accessible (support Shared Drives)
+                folder = self.service.files().get(
+                    fileId=folder_id,
+                    fields="id, name",
+                    supportsAllDrives=True
+                ).execute()
                 logger.info(f"Scanning folder: {folder['name']} ({folder_id})")
             except Exception as e:
                 raise ValueError(
@@ -149,6 +156,8 @@ class DriveImageIndexer:
                             pageSize=100,
                             fields="nextPageToken, files(id, name, mimeType, size, parents)",
                             pageToken=page_token,
+                            supportsAllDrives=True,
+                            includeItemsFromAllDrives=True
                         )
                         .execute()
                     )
@@ -199,8 +208,8 @@ class DriveImageIndexer:
         file_metadata = self.service.files().get(fileId=file_id, fields="name").execute()
         filename = file_metadata["name"]
 
-        # Download file
-        request = self.service.files().get_media(fileId=file_id)
+        # Download file (support Shared Drives)
+        request = self.service.files().get_media(fileId=file_id, supportsAllDrives=True)
         file_content = io.BytesIO()
         downloader = MediaIoBaseDownload(file_content, request)
 

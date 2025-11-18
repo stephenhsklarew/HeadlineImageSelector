@@ -6,7 +6,7 @@ google_drive:
   # Example: https://drive.google.com/drive/folders/ABC123 -> folder_id: ABC123
   # IMPORTANT: Replace with YOUR actual Google Drive folder ID!
   folder_ids:
-    - "YOUR_FOLDER_ID_HERE"
+    - "1xdOPcguZxbzvnsO_8eNa06lmjs3JDnD4"  # New Brand Image Library (Shared Drive)
 
   # OAuth credentials (place credentials.json in project root or config/)
   credentials_path: "credentials.json"

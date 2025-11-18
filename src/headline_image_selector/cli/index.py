@@ -3,6 +3,7 @@
 CLI tool for indexing images from Google Drive
 """
 
+import json
 import logging
 from pathlib import Path
 
@@ -181,7 +182,8 @@ def main(config, reset, folder_id, verbose):
                 if extract_colors:
                     num_colors = cfg.get("indexing.num_colors", 5)
                     colors = indexer.extract_colors(image, num_colors)
-                    metadata["colors"] = colors
+                    # Convert colors list to JSON string for ChromaDB compatibility
+                    metadata["colors"] = json.dumps(colors)
 
                 # Add to vector store
                 vector_store.add_image(
