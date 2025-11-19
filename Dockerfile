@@ -46,12 +46,18 @@ RUN mkdir -p /app/data/chroma
 # Set Python path
 ENV PYTHONPATH=/app/src
 
-# Expose port
-EXPOSE 8000
+# Pre-download CLIP model to avoid rate limiting at startup
+RUN python3 -c "from transformers import CLIPModel, CLIPProcessor; \
+    model = CLIPModel.from_pretrained('openai/clip-vit-base-patch32'); \
+    processor = CLIPProcessor.from_pretrained('openai/clip-vit-base-patch32')"
+
+# Expose port (Cloud Run uses PORT env var, defaults to 8080)
+EXPOSE 8080
+ENV PORT=8080
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD curl -f http://localhost:8000/health || exit 1
+    CMD curl -f http://localhost:${PORT:-8080}/health || exit 1
 
-# Run the API server
-CMD ["uvicorn", "headline_image_selector.api.server:app", "--host", "0.0.0.0", "--port", "8000"]
+# Run the API server on Cloud Run's PORT
+CMD uvicorn headline_image_selector.api.server:app --host 0.0.0.0 --port ${PORT:-8080}
